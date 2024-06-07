@@ -36,7 +36,7 @@ export class MailerService {
                     `
             });
         } catch (error) {
-            
+            console.error('Send rate error', {error})
         }
     }
 }
