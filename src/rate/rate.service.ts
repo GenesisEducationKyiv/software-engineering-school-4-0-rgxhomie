@@ -3,6 +3,7 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as _ from 'lodash';
+import IRate from './IRate.interface';
 
 @Injectable()
 export class RateService {
@@ -11,9 +12,9 @@ export class RateService {
         @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) {}
 
-    async getCurrentRate(): Promise<Number> {
-        const cahedRate = await this.getCachedRate();
-        if (cahedRate) return cahedRate;
+    async getCurrentRate(): Promise<number> {
+        const cachedRate = await this.getCachedRate();
+        if (cachedRate) return cachedRate;
 
         const rate = await this.getNewRate();
 
@@ -22,21 +23,21 @@ export class RateService {
         return rate;
     }
 
-    private async getCachedRate(): Promise<Number | null> {
+    private async getCachedRate(): Promise<number | null> {
         return await this.cacheManager.get('rate');
     }
 
-    private async cacheNewRate(value: Number): Promise<void> {
+    private async cacheNewRate(value: number): Promise<void> {
         const cacheTtl = parseInt(this.configService.getOrThrow('api.cachettl'));
         
         return await this.cacheManager.set('rate', value, cacheTtl);
     }
 
-    private async getNewRate(): Promise<Number> {
+    private async getNewRate(): Promise<number> {
         try {
             const apiUrl = this.configService.getOrThrow(`api.url`);
 
-            const data = await axios.get<Object[]>(apiUrl);
+            const data = await axios.get<IRate[]>(apiUrl);
 
             const rate = data.data.find(curr => _.get(curr, 'cc', null) === 'USD');
 
