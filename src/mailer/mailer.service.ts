@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import ISendMailConfig from './ISendMailConfig.interface';
 
 @Injectable()
 export class MailerService {
@@ -21,22 +22,40 @@ export class MailerService {
     }
 
     async sendRate(to, rate) {
+        const { subject, html} = this.assembleRateTemplate(rate);
+        const from = `Rate notifications service`
+        
+        await this.send({
+            from,
+            to,
+            subject,
+            html
+        })
+    }
+
+    async send(config: ISendMailConfig) {
         try {
             await this.transporter.sendMail({
-                from: this.configService.get('SMTP_USER'),
-                to,
-                subject: 'USD-UAH Rate',
-                text: '',
-                html:
-                    `
-                        <div>
-                            <h1>Here is the current exchange rate:</h1>
-                            <p>1 usd = ${rate} uah</p>
-                        </div>
-                    `
-            });
-        } catch (error) {
-            console.error('Send rate error', {error})
+                from: config.from,
+                to: config.to,
+                subject: config.subject,
+                text: config.text,
+                html: config.html
+            })
+        } catch(error) {
+            console.error(`Email send error`, { error })
+        }
+    }
+
+    assembleRateTemplate(rate: number): {subject: string, html: string } {
+        return {
+            subject: ``,
+            html: `
+                    <div>
+                        <h1>Here is the current exchange rate:</h1>
+                        <p>1 usd = ${rate} uah</p>
+                    </div>
+                `
         }
     }
 }

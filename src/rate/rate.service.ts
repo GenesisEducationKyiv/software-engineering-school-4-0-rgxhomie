@@ -3,6 +3,7 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as _ from 'lodash';
+import IRate from './IRate.interface';
 
 @Injectable()
 export class RateService {
@@ -12,8 +13,8 @@ export class RateService {
     ) {}
 
     async getCurrentRate(): Promise<number> {
-        const cahedRate = await this.getCachedRate();
-        if (cahedRate) return cahedRate;
+        const cachedRate = await this.getCachedRate();
+        if (cachedRate) return cachedRate;
 
         const rate = await this.getNewRate();
 
@@ -36,7 +37,7 @@ export class RateService {
         try {
             const apiUrl = this.configService.getOrThrow(`api.url`);
 
-            const data = await axios.get<unknown[]>(apiUrl);
+            const data = await axios.get<IRate[]>(apiUrl);
 
             const rate = data.data.find(curr => _.get(curr, 'cc', null) === 'USD');
 
