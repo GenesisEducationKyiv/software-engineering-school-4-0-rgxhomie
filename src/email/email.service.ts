@@ -25,6 +25,18 @@ export class EmailService {
         })
     }
 
+    getRateTemplate(rate) {
+        return {
+            subject: `Your update on USH-UAH rate`,
+            html: `
+                    <div>
+                        <h1>Here is the current exchange rate:</h1>
+                        <p>1 usd = ${rate} uah</p>
+                    </div>
+                `
+        }
+    }
+
     @Cron('0 12 * * *')
     // @Cron('* * * * *') <- every minute for testing
     async bulkSend() {
