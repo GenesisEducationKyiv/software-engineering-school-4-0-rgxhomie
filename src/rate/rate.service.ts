@@ -45,7 +45,7 @@ export class RateService {
 
             return _.get(rate, 'rate');
         } catch (error) {
-            console.log(`RateProvider Error: `, { error });
+            console.error(`RateProvider Error: `, { error });
 
             throw new InternalServerErrorException('Provider Error');
         }
