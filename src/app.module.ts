@@ -8,6 +8,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaService } from './prisma/prisma.service';
 import { MailerModule } from './mailer/mailer.module';
 import { MailerService } from './mailer/mailer.service';
+import { SubscribtionModule } from './subscription/subscribtion.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { MailerService } from './mailer/mailer.service';
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     CacheModule.register({ isGlobal: true }),
     ScheduleModule.forRoot(),
-    MailerModule
+    MailerModule,
+    SubscribtionModule
   ],
   controllers: [],
   providers: [ PrismaService, MailerService ]
