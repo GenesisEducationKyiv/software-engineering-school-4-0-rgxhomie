@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { MailerService } from 'src/mailer/mailer.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,15 +12,29 @@ export class EmailService {
         private rateService: RateService
     ) {}
 
-    async trySubscribeEmail(email) {
-        const subscribedEmail = await this.prismaService.emails.findFirst({where: {email}});
+    async sendRate(to, rate) { 
+        const { subject, html } = this.getRateTemplate(rate);
 
-        if (subscribedEmail && subscribedEmail.is_subscribed) throw new ConflictException();
+        const from = `Rate notifications service`
+        
+        await this.mailerService.send({
+            from,
+            to,
+            subject,
+            html
+        })
+    }
 
-        if (subscribedEmail) await this.prismaService.emails.update({where: {email}, data: {is_subscribed: true}});
-        else await this.prismaService.emails.create({data: {email}});
-
-        return;
+    getRateTemplate(rate) {
+        return {
+            subject: `Your update on USH-UAH rate`,
+            html: `
+                    <div>
+                        <h1>Here is the current exchange rate:</h1>
+                        <p>1 usd = ${rate} uah</p>
+                    </div>
+                `
+        }
     }
 
     @Cron('0 12 * * *')
@@ -30,7 +44,7 @@ export class EmailService {
         const rate = await this.rateService.getCurrentRate();
 
         toList.forEach(async receiver => {
-            await this.mailerService.sendRate(receiver.email, rate);
+            await this.sendRate(receiver.email, rate);
         });
     }
 }

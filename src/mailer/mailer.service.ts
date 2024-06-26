@@ -21,18 +21,6 @@ export class MailerService {
         });
     }
 
-    async sendRate(to, rate) {
-        const { subject, html} = this.assembleRateTemplate(rate);
-        const from = `Rate notifications service`
-        
-        await this.send({
-            from,
-            to,
-            subject,
-            html
-        })
-    }
-
     async send(config: ISendMailConfig) {
         try {
             await this.transporter.sendMail({
@@ -44,18 +32,6 @@ export class MailerService {
             })
         } catch(error) {
             console.error(`Email send error`, { error })
-        }
-    }
-
-    assembleRateTemplate(rate: number): {subject: string, html: string } {
-        return {
-            subject: ``,
-            html: `
-                    <div>
-                        <h1>Here is the current exchange rate:</h1>
-                        <p>1 usd = ${rate} uah</p>
-                    </div>
-                `
         }
     }
 }
