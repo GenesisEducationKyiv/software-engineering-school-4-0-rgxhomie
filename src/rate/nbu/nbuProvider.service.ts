@@ -1,5 +1,5 @@
 import { Cache } from '@nestjs/cache-manager';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as _ from 'lodash';
