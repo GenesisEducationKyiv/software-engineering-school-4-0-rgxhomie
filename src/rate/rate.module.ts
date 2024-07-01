@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { RateService } from './rate.service';
 import { RateController } from './rate.controller';
+import { NbuProviderCreator } from './nbu/nbuProvider.creator';
 
 @Module({
-  providers: [RateService],
   controllers: [RateController],
-  exports: [RateService]
+  providers: [NbuProviderCreator],
+  exports: [NbuProviderCreator]
 })
 export class RateModule {}
