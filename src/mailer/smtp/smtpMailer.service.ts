@@ -24,7 +24,7 @@ export class SmtpMailerService implements IMailer {
     async send(config: ISendMailConfig) {
         try {
             await this.transporter.sendMail({
-                from: config.from,
+                from: this.configService.get('SMTP_USER'),
                 to: config.to,
                 subject: config.subject,
                 text: config.text,
