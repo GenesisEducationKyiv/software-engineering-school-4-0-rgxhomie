@@ -7,8 +7,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaService } from './prisma/prisma.service';
 import { MailerModule } from './mailer/mailer.module';
-import { MailerService } from './mailer/mailer.service';
 import { SubscribtionModule } from './subscription/subscribtion.module';
+import { NbuProviderCreator } from './rate/nbu/nbuProvider.creator';
 
 @Module({
   imports: [
@@ -20,6 +20,6 @@ import { SubscribtionModule } from './subscription/subscribtion.module';
     SubscribtionModule
   ],
   controllers: [],
-  providers: [ PrismaService, MailerService ]
+  providers: [ PrismaService, NbuProviderCreator ]
 })
 export class AppModule {}

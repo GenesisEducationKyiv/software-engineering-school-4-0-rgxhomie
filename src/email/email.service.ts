@@ -1,24 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { MailerService } from 'src/mailer/mailer.service';
+import { SmtpMailerCreator } from 'src/mailer/smtp/smtpMailer.creator';
+import { IMailer } from 'src/mailer/types/mailer.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RateService } from 'src/rate/rate.service';
+import { NbuProviderCreator } from 'src/rate/nbu/nbuProvider.creator';
+import { IRateProvider } from 'src/rate/types/provider.interface';
 
 @Injectable()
 export class EmailService {
+    private mailer: IMailer
+    private rateProvider: IRateProvider
+
     constructor(
         private prismaService: PrismaService,
-        private mailerService: MailerService,
-        private rateService: RateService
-    ) {}
+        private mailerCreator: SmtpMailerCreator,
+        private providerCreator: NbuProviderCreator
+    ) {
+        this.mailer = mailerCreator.createMailer()
+        this.rateProvider = providerCreator.createProvider()
+    }
 
     async sendRate(to, rate) { 
         const { subject, html } = this.getRateTemplate(rate);
 
-        const from = `Rate notifications service`
         
-        await this.mailerService.send({
-            from,
+        await this.mailer.send({
             to,
             subject,
             html
@@ -37,11 +43,11 @@ export class EmailService {
         }
     }
 
-    @Cron('0 12 * * *')
-    // @Cron('* * * * *') <- every minute for testing
+    // @Cron('0 12 * * *')
+    @Cron('* * * * *') // <- every minute for testing
     async bulkSend() {
         const toList = await this.prismaService.emails.findMany({where: {is_subscribed: true}});
-        const rate = await this.rateService.getCurrentRate();
+        const rate = await this.rateProvider.getRate();
 
         toList.forEach(async receiver => {
             await this.sendRate(receiver.email, rate);

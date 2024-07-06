@@ -11,8 +11,9 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "start:migrate:build:prod": "prisma db push --skip-generate && npm run build && npm run start:prod"
+    "start:prod": "node dist/src/main",
+    "start:migrate:build:prod": "prisma db push --skip-generate && npm run build && npm run start:prod",
+    "test": "jest"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.2.2",

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
-import ISendMailConfig from './ISendMailConfig.interface';
+import { ISendMailConfig, IMailer } from '../types/mailer.interface';
 
 @Injectable()
-export class MailerService {
+export class SmtpMailerService implements IMailer {
     private transporter;
     
     constructor(
@@ -24,7 +24,7 @@ export class MailerService {
     async send(config: ISendMailConfig) {
         try {
             await this.transporter.sendMail({
-                from: config.from,
+                from: this.configService.get('SMTP_USER'),
                 to: config.to,
                 subject: config.subject,
                 text: config.text,

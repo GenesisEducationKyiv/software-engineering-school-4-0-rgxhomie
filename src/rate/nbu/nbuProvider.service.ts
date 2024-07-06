@@ -1,18 +1,18 @@
-import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Cache } from '@nestjs/cache-manager';
+import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as _ from 'lodash';
 import IRate from './IRate.interface';
+import { IRateProvider } from '../types/provider.interface';
 
-@Injectable()
-export class RateService {
+export class NbuProviderService implements IRateProvider {
     constructor(
         private configService: ConfigService,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache
+        private cacheManager: Cache
     ) {}
 
-    async getCurrentRate(): Promise<number> {
+    async getRate(): Promise<number> {
         const cachedRate = await this.getCachedRate();
         if (cachedRate) return cachedRate;
 
