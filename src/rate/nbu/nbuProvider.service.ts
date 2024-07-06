@@ -4,7 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as _ from 'lodash';
 import IRate from './IRate.interface';
+<<<<<<< HEAD:src/rate/nbu/nbuProvider.service.ts
 import { IRateProvider } from '../types/provider.interface';
+=======
+>>>>>>> main:src/rate/rate.service.ts
 
 export class NbuProviderService implements IRateProvider {
     constructor(
@@ -12,7 +15,11 @@ export class NbuProviderService implements IRateProvider {
         private cacheManager: Cache
     ) {}
 
+<<<<<<< HEAD:src/rate/nbu/nbuProvider.service.ts
     async getRate(): Promise<number> {
+=======
+    async getCurrentRate(): Promise<number> {
+>>>>>>> main:src/rate/rate.service.ts
         const cachedRate = await this.getCachedRate();
         if (cachedRate) return cachedRate;
 
