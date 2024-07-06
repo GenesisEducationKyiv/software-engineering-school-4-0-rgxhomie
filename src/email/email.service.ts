@@ -13,20 +13,18 @@ export class EmailService {
 
     constructor(
         private prismaService: PrismaService,
-        private smtpMailerCreator: SmtpMailerCreator,
+        private mailerCreator: SmtpMailerCreator,
         private providerCreator: NbuProviderCreator
     ) {
-        this.mailer = smtpMailerCreator.createMailer()
+        this.mailer = mailerCreator.createMailer()
         this.rateProvider = providerCreator.createProvider()
     }
 
     async sendRate(to, rate) { 
         const { subject, html } = this.getRateTemplate(rate);
 
-        const from = `Rate notifications service`
         
         await this.mailer.send({
-            from,
             to,
             subject,
             html
@@ -45,8 +43,8 @@ export class EmailService {
         }
     }
 
-    @Cron('0 12 * * *')
-    // @Cron('* * * * *') <- every minute for testing
+    // @Cron('0 12 * * *')
+    @Cron('* * * * *') // <- every minute for testing
     async bulkSend() {
         const toList = await this.prismaService.emails.findMany({where: {is_subscribed: true}});
         const rate = await this.rateProvider.getRate();
